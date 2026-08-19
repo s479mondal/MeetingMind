@@ -196,33 +196,32 @@ export default function Settings() {
                 onChange={(e) => handleChange('asrProvider', e.target.value)}
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
               >
-                <option value="openai-whisper">OpenAI Whisper (Requires API Key)</option>
-                <option value="mock">Demo Mode (Local preset-based mock generation)</option>
+                <option value="openai-whisper">Active API Integration (OpenAI / Groq Compatible)</option>
               </select>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Demo mode doesn't connect to OpenAI endpoints. Instead, it simulates transcription processing on upload.
+                Connects directly to the endpoint configured below to transcribe your audio recording dynamically.
               </p>
             </div>
 
             {/* ASR Model */}
-            {settings.asrProvider !== 'mock' && (
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-700 dark:text-slate-400 flex items-center gap-1.5">
-                  <Radio className="h-4 w-4 text-emerald-500" /> ASR Model Name
-                </label>
-                <input
-                  type="text"
-                  value={settings.asrModel || ''}
-                  onChange={(e) => handleChange('asrModel', e.target.value)}
-                  placeholder="whisper-large-v3"
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
-                />
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  <span className="font-semibold">OpenAI:</span> <code>whisper-1</code> &nbsp;|&nbsp;
-                  <span className="font-semibold">Groq (free):</span> <code>whisper-large-v3</code>
-                </p>
-              </div>
-            )}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-400 flex items-center gap-1.5">
+                <Radio className="h-4 w-4 text-emerald-500" /> ASR Model Name
+              </label>
+              <select
+                value={settings.asrModel || 'whisper-large-v3'}
+                onChange={(e) => {
+                  if (e.target.value !== 'whisper-1') handleChange('asrModel', e.target.value);
+                }}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
+              >
+                <option value="whisper-large-v3">✅ whisper-large-v3 — Groq (Free)</option>
+                <option value="whisper-1" disabled style={{color:'#9ca3af'}}>🔒 whisper-1 — OpenAI (Paid Only, not selectable)</option>
+              </select>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Only <code>whisper-large-v3</code> via Groq is available for free use. <span className="text-amber-500 font-semibold">whisper-1 requires a paid OpenAI account.</span>
+              </p>
+            </div>
 
             {/* Quick Fill: Groq */}
             <div className="rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 border border-emerald-200 dark:border-emerald-900/30 p-4">
@@ -283,15 +282,25 @@ export default function Settings() {
               </label>
               <select
                 value={settings.llmModel}
-                onChange={(e) => handleChange('llmModel', e.target.value)}
+                onChange={(e) => {
+                  const paidModels = ['gpt-4o-mini','gpt-4o','o1-mini'];
+                  if (!paidModels.includes(e.target.value)) handleChange('llmModel', e.target.value);
+                }}
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
               >
-                <option value="gpt-4o-mini">gpt-4o-mini (OpenAI - Cost-efficient)</option>
-                <option value="gpt-4o">gpt-4o (OpenAI - High reasoning quality)</option>
-                <option value="o1-mini">o1-mini (OpenAI - Advanced reasoning)</option>
-                <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Groq - High Quality - Free)</option>
-                <option value="llama3-8b-8192">llama3-8b-8192 (Groq - Fast - Free)</option>
+                <optgroup label="✅ Free — Groq (Recommended)">
+                  <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile — High Quality</option>
+                  <option value="llama3-8b-8192">llama3-8b-8192 — Fast &amp; Lightweight</option>
+                </optgroup>
+                <optgroup label="🔒 Paid Only — OpenAI (Not selectable)">
+                  <option value="gpt-4o-mini" disabled style={{color:'#9ca3af'}}>gpt-4o-mini — Requires paid OpenAI key</option>
+                  <option value="gpt-4o" disabled style={{color:'#9ca3af'}}>gpt-4o — Requires paid OpenAI key</option>
+                  <option value="o1-mini" disabled style={{color:'#9ca3af'}}>o1-mini — Requires paid OpenAI key</option>
+                </optgroup>
               </select>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Free Groq models are fully functional. <span className="text-amber-500 font-semibold">OpenAI models require a paid API subscription and are shown for reference only.</span>
+              </p>
             </div>
 
             {/* Submit Button */}
