@@ -1,0 +1,38 @@
+# Node dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Java/Maven Build
+backend/target/
+backend/*.db
+.mvn/
+mvnw
+mvnw.cmd
+*.class
+*.jar
+*.war
+
+# Custom local tools
+maven/
+*.zip
+
+# Environment & credentials — never commit real secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# Allow the example template to be committed
+!.env.example
+
+# IDE configurations
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp

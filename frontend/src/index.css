@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #f5f3ff;
+  --color-brand-100: #ede9fe;
+  --color-brand-200: #ddd6fe;
+  --color-brand-300: #c4b5fd;
+  --color-brand-400: #a78bfa;
+  --color-brand-500: #8b5cf6;
+  --color-brand-600: #7c3aed;
+  --color-brand-700: #6d28d9;
+  --color-brand-800: #5b21b6;
+  --color-brand-900: #4c1d95;
+  --color-brand-950: #0b0a0f;
+  
+  --color-darkbg-950: #070709;
+  --color-darkbg-900: #0f0f15;
+  --color-darkbg-800: #1a1a24;
+  --color-darkbg-700: #2b2b36;
+  
+  --font-sans: 'Inter', sans-serif;
+}
+
+@utility glass-effect {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@utility animate-dash {
+  stroke-dasharray: 5, 5;
+  animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 transition-colors duration-200 dark:bg-darkbg-950 dark:text-slate-100;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded bg-slate-300 hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700;
+}
