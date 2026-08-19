@@ -217,7 +217,7 @@ export default function Dashboard() {
             <Sparkles className="h-8 w-8 text-violet-200 mb-4 animate-bounce" />
             <h3 className="font-bold text-lg">MeetingMind AI</h3>
             <p className="text-sm text-violet-100 mt-2 leading-relaxed">
-              Unlock actionable intelligence from your voice recordings. Make sure to input your OpenAI API credentials in settings for real-time transcription and summary.
+              Powered by Groq's free Whisper ASR and LLaMA 3.3 for real-time transcription and meeting summarization. Configure your Groq API key in Settings to get started.
             </p>
             <div className="mt-6">
               <Link 

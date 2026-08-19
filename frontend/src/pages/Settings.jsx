@@ -234,7 +234,7 @@ export default function Settings() {
                 onClick={() => setSettings(prev => ({
                   ...prev,
                   openaiBaseUrl: 'https://api.groq.com/openai/v1',
-                  llmModel: 'llama-3.3-70b-versatile',
+                  llmModel: 'openai/gpt-oss-20b',
                   asrModel: 'whisper-large-v3',
                   asrProvider: 'openai-whisper',
                 }))}
@@ -282,24 +282,21 @@ export default function Settings() {
               </label>
               <select
                 value={settings.llmModel}
-                onChange={(e) => {
-                  const paidModels = ['gpt-4o-mini','gpt-4o','o1-mini'];
-                  if (!paidModels.includes(e.target.value)) handleChange('llmModel', e.target.value);
-                }}
+                onChange={(e) => handleChange('llmModel', e.target.value)}
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
               >
-                <optgroup label="✅ Free — Groq (Recommended)">
-                  <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile — High Quality</option>
-                  <option value="llama3-8b-8192">llama3-8b-8192 — Fast &amp; Lightweight</option>
+                <optgroup label="✅ Free — Groq (Verified Working)">
+                  <option value="openai/gpt-oss-20b">openai/gpt-oss-20b — Fast &amp; Free (Recommended)</option>
+                  <option value="openai/gpt-oss-120b">openai/gpt-oss-120b — High Quality &amp; Free</option>
+                  <option value="qwen/qwen3.6-27b">qwen/qwen3.6-27b — Alternative Free Model</option>
                 </optgroup>
                 <optgroup label="🔒 Paid Only — OpenAI (Not selectable)">
                   <option value="gpt-4o-mini" disabled style={{color:'#9ca3af'}}>gpt-4o-mini — Requires paid OpenAI key</option>
                   <option value="gpt-4o" disabled style={{color:'#9ca3af'}}>gpt-4o — Requires paid OpenAI key</option>
-                  <option value="o1-mini" disabled style={{color:'#9ca3af'}}>o1-mini — Requires paid OpenAI key</option>
                 </optgroup>
               </select>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Free Groq models are fully functional. <span className="text-amber-500 font-semibold">OpenAI models require a paid API subscription and are shown for reference only.</span>
+                Free Groq models are verified working. <span className="text-amber-500 font-semibold">OpenAI models require a paid API subscription.</span>
               </p>
             </div>
 

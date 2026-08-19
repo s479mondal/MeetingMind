@@ -46,10 +46,10 @@ public class MongoConfig implements ApplicationRunner {
 
         // Clean up deprecated settings so they refresh from .env
         try {
-            org.bson.Document query = new org.bson.Document("llmModel", "llama-3.1-8b-instant");
+            org.bson.Document query = new org.bson.Document("llmModel", new org.bson.Document("$in", java.util.Arrays.asList("llama-3.1-8b-instant", "llama-3.3-70b-versatile", "llama3-8b-8192")));
             long deletedCount = db.getCollection("system_settings").deleteMany(query).getDeletedCount();
             if (deletedCount > 0) {
-                log.info("Cleared deprecated system settings with llama-3.1-8b-instant model to force refresh from .env");
+                log.info("Cleared deprecated system settings with deprecated models to force refresh from .env");
             }
         } catch (Exception e) {
             log.warn("Cleanup of deprecated settings skipped: {}", e.getMessage());

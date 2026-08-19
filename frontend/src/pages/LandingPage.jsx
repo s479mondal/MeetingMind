@@ -64,7 +64,7 @@ export default function LandingPage() {
             to="/dashboard" 
             className="rounded-xl border border-slate-700 bg-slate-800/40 px-8 py-4 font-bold text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200"
           >
-            View Demo Dashboard
+            View Dashboard
           </Link>
         </div>
 
@@ -164,9 +164,9 @@ export default function LandingPage() {
 
             <div className="p-8 rounded-2xl border border-slate-800 bg-slate-900/50 hover:border-violet-500/30 transition-colors">
               <FileCheck2 className="h-8 w-8 text-rose-400 mb-4" />
-              <h3 className="text-lg font-bold mb-2">Demo / Mock Mode</h3>
+              <h3 className="text-lg font-bold mb-2">Free Groq AI — No Cost</h3>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Don't have API keys yet? Easily toggle a mock pipeline in settings to see full system capability with sample meetings.
+                100% powered by Groq's free API. Real Whisper transcription and LLaMA summarization — no credit card, no subscription required.
               </p>
             </div>
           </div>
@@ -175,7 +175,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-slate-850 bg-slate-950 py-12 text-center text-slate-500 text-sm">
-        <p>© 2026 MeetingMind. Built with React, Spring Boot, MongoDB, and OpenAI.</p>
+        <p>© 2026 MeetingMind. Built with React, Spring Boot, MongoDB Atlas &amp; Groq AI (Whisper + LLaMA 3.3).</p>
       </footer>
     </div>
   );
