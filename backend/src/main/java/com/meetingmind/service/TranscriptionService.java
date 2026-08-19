@@ -42,7 +42,7 @@ public class TranscriptionService {
         MultipartBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", audioFile.getName(), fileBody)
-                .addFormDataPart("model", "whisper-1")
+                .addFormDataPart("model", settings.getAsrModel() != null ? settings.getAsrModel() : "whisper-large-v3")
                 .addFormDataPart("response_format", "text")
                 .build();
 

@@ -3,6 +3,7 @@ package com.meetingmind.controller;
 import com.meetingmind.model.SystemSettings;
 import com.meetingmind.repository.SystemSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,15 +16,31 @@ public class SystemSettingsController {
     @Autowired
     private SystemSettingsRepository settingsRepository;
 
+    @Value("${app.openai.api-key:}")
+    private String defaultApiKey;
+
+    @Value("${app.openai.base-url:https://api.openai.com/v1}")
+    private String defaultBaseUrl;
+
+    @Value("${app.openai.llm-model:gpt-4o-mini}")
+    private String defaultLlmModel;
+
+    @Value("${app.asr.provider:mock}")
+    private String defaultAsrProvider;
+
+    @Value("${app.asr.model:whisper-large-v3}")
+    private String defaultAsrModel;
+
     @GetMapping
     public ResponseEntity<SystemSettings> getSettings() {
         List<SystemSettings> list = settingsRepository.findAll();
         if (list.isEmpty()) {
             SystemSettings defaultSettings = SystemSettings.builder()
-                    .openaiApiKey("")
-                    .openaiBaseUrl("https://api.openai.com/v1")
-                    .llmModel("gpt-4o-mini")
-                    .asrProvider("mock") // Default to mock mode — no API key needed out of the box
+                    .openaiApiKey(defaultApiKey)
+                    .openaiBaseUrl(defaultBaseUrl)
+                    .llmModel(defaultLlmModel)
+                    .asrProvider(defaultAsrProvider)
+                    .asrModel(defaultAsrModel)
                     .build();
             defaultSettings = settingsRepository.save(defaultSettings);
             return ResponseEntity.ok(defaultSettings);
@@ -47,6 +64,9 @@ public class SystemSettingsController {
         existing.setOpenaiBaseUrl(newSettings.getOpenaiBaseUrl());
         existing.setLlmModel(newSettings.getLlmModel());
         existing.setAsrProvider(newSettings.getAsrProvider());
+        if (newSettings.getAsrModel() != null && !newSettings.getAsrModel().trim().isEmpty()) {
+            existing.setAsrModel(newSettings.getAsrModel());
+        }
 
         // Update key only if it's not empty and not masked
         String newKey = newSettings.getOpenaiApiKey();

@@ -26,4 +26,7 @@ public class SystemSettings {
     
     @Builder.Default
     private String asrProvider = "openai-whisper"; // openai-whisper or mock
+
+    @Builder.Default
+    private String asrModel = "whisper-large-v3"; // whisper-1 (OpenAI) or whisper-large-v3 (Groq)
 }

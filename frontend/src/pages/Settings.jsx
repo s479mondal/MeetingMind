@@ -19,7 +19,8 @@ export default function Settings() {
     openaiApiKey: '',
     openaiBaseUrl: 'https://api.openai.com/v1',
     llmModel: 'gpt-4o-mini',
-    asrProvider: 'openai-whisper', // options: openai-whisper, mock
+    asrProvider: 'openai-whisper',
+    asrModel: 'whisper-large-v3',
   });
 
   const [loading, setLoading] = useState(true);
@@ -188,7 +189,7 @@ export default function Settings() {
             {/* ASR Provider Selection */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-slate-700 dark:text-slate-400 flex items-center gap-1.5">
-                <Radio className="h-4 w-4 text-violet-500" /> Speech-To-Text (ASR) Config
+                <Radio className="h-4 w-4 text-violet-500" /> Speech-To-Text (ASR) Provider
               </label>
               <select
                 value={settings.asrProvider}
@@ -203,7 +204,46 @@ export default function Settings() {
               </p>
             </div>
 
-            {/* API URL Configuration */}
+            {/* ASR Model */}
+            {settings.asrProvider !== 'mock' && (
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-700 dark:text-slate-400 flex items-center gap-1.5">
+                  <Radio className="h-4 w-4 text-emerald-500" /> ASR Model Name
+                </label>
+                <input
+                  type="text"
+                  value={settings.asrModel || ''}
+                  onChange={(e) => handleChange('asrModel', e.target.value)}
+                  placeholder="whisper-large-v3"
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
+                />
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <span className="font-semibold">OpenAI:</span> <code>whisper-1</code> &nbsp;|&nbsp;
+                  <span className="font-semibold">Groq (free):</span> <code>whisper-large-v3</code>
+                </p>
+              </div>
+            )}
+
+            {/* Quick Fill: Groq */}
+            <div className="rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 border border-emerald-200 dark:border-emerald-900/30 p-4">
+              <p className="text-xs font-bold text-emerald-800 dark:text-emerald-400 mb-1">🆓 Use Groq — 100% Free, No Credit Card</p>
+              <p className="text-xs text-emerald-700 dark:text-emerald-500 mb-3">
+                Get a free key at <a href="https://console.groq.com" target="_blank" rel="noreferrer" className="underline font-semibold">console.groq.com</a>, then click below to auto-fill the settings.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSettings(prev => ({
+                  ...prev,
+                  openaiBaseUrl: 'https://api.groq.com/openai/v1',
+                  llmModel: 'llama-3.3-70b-versatile',
+                  asrModel: 'whisper-large-v3',
+                  asrProvider: 'openai-whisper',
+                }))}
+                className="text-xs font-bold px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-colors"
+              >
+                ⚡ Auto-fill Groq Settings
+              </button>
+            </div>
             <div className="space-y-2">
               <label htmlFor="baseUrl" className="text-sm font-semibold text-slate-700 dark:text-slate-350 flex items-center gap-1.5">
                 <Cpu className="h-4 w-4 text-indigo-500" /> OpenAI-Compatible Base URL
@@ -246,9 +286,11 @@ export default function Settings() {
                 onChange={(e) => handleChange('llmModel', e.target.value)}
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
               >
-                <option value="gpt-4o-mini">gpt-4o-mini (Cost-efficient, recommended)</option>
-                <option value="gpt-4o">gpt-4o (High reasoning quality)</option>
-                <option value="o1-mini">o1-mini (Advanced logical reasoning)</option>
+                <option value="gpt-4o-mini">gpt-4o-mini (OpenAI - Cost-efficient)</option>
+                <option value="gpt-4o">gpt-4o (OpenAI - High reasoning quality)</option>
+                <option value="o1-mini">o1-mini (OpenAI - Advanced reasoning)</option>
+                <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Groq - High Quality - Free)</option>
+                <option value="llama3-8b-8192">llama3-8b-8192 (Groq - Fast - Free)</option>
               </select>
             </div>
 

@@ -44,6 +44,17 @@ public class MongoConfig implements ApplicationRunner {
             log.info("Collection already exists: system_settings");
         }
 
+        // Clean up deprecated settings so they refresh from .env
+        try {
+            org.bson.Document query = new org.bson.Document("llmModel", "llama-3.1-8b-instant");
+            long deletedCount = db.getCollection("system_settings").deleteMany(query).getDeletedCount();
+            if (deletedCount > 0) {
+                log.info("Cleared deprecated system settings with llama-3.1-8b-instant model to force refresh from .env");
+            }
+        } catch (Exception e) {
+            log.warn("Cleanup of deprecated settings skipped: {}", e.getMessage());
+        }
+
         // Ensure index on meetings.title for search performance
         try {
             db.getCollection("meetings")
