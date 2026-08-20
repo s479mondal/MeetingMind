@@ -10,6 +10,7 @@ import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.beans.factory.annotation.Value;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +20,12 @@ public class SummarizationService {
 
     @Autowired
     private SettingsService settingsService;
+
+    @Value("${app.groq.api-key:}")
+    private String groqApiKey;
+
+    @Value("${app.gemini.api-key:}")
+    private String geminiApiKey;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     
@@ -31,15 +38,39 @@ public class SummarizationService {
     public Map<String, Object> analyzeTranscript(String transcript, String title) throws Exception {
         SystemSettings settings = settingsService.getActiveSettings();
         
-        if (settings.getOpenaiApiKey() == null 
-                || settings.getOpenaiApiKey().trim().isEmpty()) {
-            throw new IOException("API Key is missing. Please configure your API key in Settings.");
+        String provider = settings.getSummaryProvider();
+        if (provider == null) {
+            provider = "groq"; // fallback
+        }
+        provider = provider.toLowerCase();
+
+        String apiKey = null;
+        String baseUrl = null;
+        String modelName = null;
+
+        if ("groq".equals(provider)) {
+            apiKey = (groqApiKey != null && !groqApiKey.trim().isEmpty()) ? groqApiKey : settings.getOpenaiApiKey();
+            baseUrl = "https://api.groq.com/openai/v1";
+            modelName = "llama-3.3-70b-versatile";
+        } else if ("gemini".equals(provider)) {
+            apiKey = (geminiApiKey != null && !geminiApiKey.trim().isEmpty()) ? geminiApiKey : settings.getOpenaiApiKey();
+            baseUrl = "https://generativelanguage.googleapis.com/v1beta/openai";
+            modelName = "gemini-2.5-flash";
+        } else {
+            // custom / default
+            apiKey = settings.getOpenaiApiKey();
+            baseUrl = settings.getOpenaiBaseUrl();
+            modelName = settings.getLlmModel();
         }
 
-        return analyzeWithLLM(transcript, settings);
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            throw new IOException("API Key for " + provider + " is missing. Please configure it in your environment/settings.");
+        }
+
+        return analyzeWithLLM(transcript, apiKey, baseUrl, modelName);
     }
 
-    private Map<String, Object> analyzeWithLLM(String transcript, SystemSettings settings) throws Exception {
+    private Map<String, Object> analyzeWithLLM(String transcript, String apiKey, String baseUrl, String modelName) throws Exception {
         String prompt = "You are a professional meeting intelligence AI. Analyze the following meeting transcript. " +
                 "Extract: \n" +
                 "1. A concise executive summary of the discussion (1-2 paragraphs).\n" +
@@ -79,7 +110,7 @@ public class SummarizationService {
 
         // Construct Chat Completion Payload
         ObjectNode payload = objectMapper.createObjectNode();
-        payload.put("model", settings.getLlmModel());
+        payload.put("model", modelName);
         
         ArrayNode messages = payload.putArray("messages");
         ObjectNode systemMessage = messages.addObject();
@@ -93,11 +124,11 @@ public class SummarizationService {
         payload.put("temperature", 0.1);
 
         String jsonPayload = objectMapper.writeValueAsString(payload);
-        String url = settings.getOpenaiBaseUrl() + "/chat/completions";
+        String url = baseUrl + "/chat/completions";
 
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "Bearer " + settings.getOpenaiApiKey())
+                .addHeader("Authorization", "Bearer " + apiKey)
                 .addHeader("Content-Type", "application/json")
                 .post(RequestBody.create(jsonPayload, MediaType.parse("application/json")))
                 .build();

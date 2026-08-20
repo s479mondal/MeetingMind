@@ -21,6 +21,7 @@ export default function Settings() {
     llmModel: 'gpt-4o-mini',
     asrProvider: 'openai-whisper',
     asrModel: 'whisper-large-v3',
+    summaryProvider: 'groq',
   });
 
   const [loading, setLoading] = useState(true);
@@ -117,132 +118,146 @@ export default function Settings() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      {/* Title */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">System Settings</h1>
-        <p className="text-slate-500 dark:text-slate-400 mt-1">
-          Configure API connection endpoints, LLM model sizes, and customize app preferences.
-        </p>
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      {/* Title with theme switcher in top right */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">System Settings</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs sm:text-sm">
+            Configure ASR provider models, AI summarization models, and API configurations.
+          </p>
+        </div>
+        <button 
+          onClick={toggleTheme}
+          title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          className="self-start sm:self-auto rounded-xl border border-slate-200 p-2.5 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-darkbg-900 dark:hover:bg-darkbg-850 hover:shadow-sm transition-all duration-200"
+        >
+          {darkMode ? <Sun className="h-5 w-5 text-amber-500" /> : <Moon className="h-5 w-5 text-slate-600" />}
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left column: Preferences */}
-        <div className="space-y-6">
-          {/* Connection Diagnostics Card */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-darkbg-900">
-            <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-4">Diagnostics</h3>
-            
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600 dark:text-slate-400">Server Connectivity</span>
-                {checkingConnection ? (
-                  <Loader2 className="h-5 w-5 text-violet-600 animate-spin" />
-                ) : backendConnected ? (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
-                    <CheckCircle2 className="h-4 w-4" /> Connected
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600">
-                    <XCircle className="h-4 w-4" /> Offline
-                  </span>
-                )}
-              </div>
-
-              <button 
-                onClick={handleTestConnection}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 text-xs font-semibold hover:bg-slate-100 dark:border-slate-800 dark:bg-darkbg-850 dark:hover:bg-darkbg-800"
-              >
-                Ping Server
-              </button>
-            </div>
+      <form onSubmit={handleSave} className="rounded-2xl sm:rounded-3xl border border-slate-200 bg-white p-5 sm:p-8 shadow-sm dark:border-slate-800 dark:bg-darkbg-900 space-y-6">
+        
+        {statusMsg && (
+          <div className={`flex items-center gap-3 rounded-xl border p-4 text-sm
+            ${statusMsg.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/30 dark:bg-emerald-950/20 dark:text-emerald-400' : 'border-red-200 bg-red-50 text-red-800 dark:border-red-900/30 dark:bg-red-950/20'}`}
+          >
+            {statusMsg.type === 'success' ? <CheckCircle2 className="h-5 w-5 flex-shrink-0" /> : <XCircle className="h-5 w-5 flex-shrink-0" />}
+            <p className="font-semibold">{statusMsg.text}</p>
           </div>
+        )}
 
-          {/* Theme Preferences */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-darkbg-900">
-            <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-4">Aesthetics</h3>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-600 dark:text-slate-400">Dark Mode</span>
-              <button 
-                onClick={toggleTheme}
-                className="rounded-xl border border-slate-200 p-2.5 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-darkbg-800 transition-colors"
-              >
-                {darkMode ? <Sun className="h-5 w-5 text-amber-500" /> : <Moon className="h-5 w-5 text-slate-600" />}
-              </button>
-            </div>
+        {/* ASR Provider Selection */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-slate-700 dark:text-slate-400 flex items-center gap-1.5">
+            <Radio className="h-4 w-4 text-violet-500" /> Speech-To-Text (ASR) Provider
+          </label>
+          <select
+            value={settings.asrProvider}
+            onChange={(e) => handleChange('asrProvider', e.target.value)}
+            className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
+          >
+            <option value="openai-whisper">Active API Integration (OpenAI / Groq Compatible)</option>
+          </select>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Connects directly to the endpoint configured below to transcribe your audio recording dynamically.
+          </p>
+        </div>
+
+        {/* ASR Model */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-slate-700 dark:text-slate-400 flex items-center gap-1.5">
+            <Radio className="h-4 w-4 text-emerald-500" /> ASR Model Name
+          </label>
+          <select
+            value={settings.asrModel || 'whisper-large-v3'}
+            onChange={(e) => {
+              if (e.target.value !== 'whisper-1') handleChange('asrModel', e.target.value);
+            }}
+            className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
+          >
+            <option value="whisper-large-v3">✅ whisper-large-v3 — Groq (Free)</option>
+            <option value="whisper-1" disabled style={{color:'#9ca3af'}}>🔒 whisper-1 — OpenAI (Paid Only, not selectable)</option>
+          </select>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Only <code>whisper-large-v3</code> via Groq is available for free use. <span className="text-amber-500 font-semibold">whisper-1 requires a paid OpenAI account.</span>
+          </p>
+        </div>
+
+        {/* AI Provider for Summary */}
+        <div className="space-y-3">
+          <label className="text-sm font-semibold text-slate-700 dark:text-slate-400 flex items-center gap-1.5">
+            <Cpu className="h-4 w-4 text-violet-500" /> AI Provider for Summary
+          </label>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Groq Card */}
+            <label className={`cursor-pointer rounded-xl border p-4 flex flex-col justify-between transition-all duration-200 ${
+              settings.summaryProvider === 'groq' 
+                ? 'border-violet-600 bg-violet-50/50 dark:border-violet-500 dark:bg-violet-950/20' 
+                : 'border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-850 dark:bg-darkbg-850'
+            }`}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-bold text-sm text-slate-900 dark:text-white">Groq</span>
+                <input 
+                  type="radio" 
+                  name="summaryProvider" 
+                  value="groq" 
+                  checked={settings.summaryProvider === 'groq'}
+                  onChange={() => handleChange('summaryProvider', 'groq')}
+                  className="text-violet-600 focus:ring-violet-500 h-4 w-4"
+                />
+              </div>
+              <span className="text-xs text-slate-500 dark:text-slate-400">Llama 3.3 70B</span>
+              <span className="text-xs font-semibold text-emerald-600 mt-2">FREE Tier</span>
+            </label>
+
+            {/* Gemini Card */}
+            <label className={`cursor-pointer rounded-xl border p-4 flex flex-col justify-between transition-all duration-200 ${
+              settings.summaryProvider === 'gemini' 
+                ? 'border-violet-600 bg-violet-50/50 dark:border-violet-500 dark:bg-violet-950/20' 
+                : 'border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-850 dark:bg-darkbg-850'
+            }`}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-bold text-sm text-slate-900 dark:text-white">Google Gemini</span>
+                <input 
+                  type="radio" 
+                  name="summaryProvider" 
+                  value="gemini" 
+                  checked={settings.summaryProvider === 'gemini'}
+                  onChange={() => handleChange('summaryProvider', 'gemini')}
+                  className="text-violet-600 focus:ring-violet-500 h-4 w-4"
+                />
+              </div>
+              <span className="text-xs text-slate-500 dark:text-slate-400">Gemini 2.5 Flash</span>
+              <span className="text-xs font-semibold text-emerald-600 mt-2">FREE Tier</span>
+            </label>
+
+            {/* Custom Card */}
+            <label className={`cursor-pointer rounded-xl border p-4 flex flex-col justify-between transition-all duration-200 ${
+              settings.summaryProvider === 'custom' 
+                ? 'border-violet-600 bg-violet-50/50 dark:border-violet-500 dark:bg-violet-950/20' 
+                : 'border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-850 dark:bg-darkbg-850'
+            }`}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-bold text-sm text-slate-900 dark:text-white">Custom Endpoint</span>
+                <input 
+                  type="radio" 
+                  name="summaryProvider" 
+                  value="custom" 
+                  checked={settings.summaryProvider === 'custom'}
+                  onChange={() => handleChange('summaryProvider', 'custom')}
+                  className="text-violet-600 focus:ring-violet-500 h-4 w-4"
+                />
+              </div>
+              <span className="text-xs text-slate-500 dark:text-slate-400">Custom Base URL/Key</span>
+              <span className="text-xs font-semibold text-amber-600 mt-2">OpenAI Compatible</span>
+            </label>
           </div>
         </div>
 
-        {/* Right column: Form */}
-        <div className="lg:col-span-2">
-          <form onSubmit={handleSave} className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-darkbg-900 space-y-6">
-            
-            {statusMsg && (
-              <div className={`flex items-center gap-3 rounded-xl border p-4 text-sm
-                ${statusMsg.type === 'success' ? 'border-emerald-250 bg-emerald-50 text-emerald-800 dark:border-emerald-900/30 dark:bg-emerald-950/20 dark:text-emerald-400' : 'border-red-200 bg-red-50 text-red-800 dark:border-red-900/30 dark:bg-red-950/20'}`}
-              >
-                {statusMsg.type === 'success' ? <CheckCircle2 className="h-5 w-5 flex-shrink-0" /> : <XCircle className="h-5 w-5 flex-shrink-0" />}
-                <p className="font-semibold">{statusMsg.text}</p>
-              </div>
-            )}
-
-            {/* ASR Provider Selection */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700 dark:text-slate-400 flex items-center gap-1.5">
-                <Radio className="h-4 w-4 text-violet-500" /> Speech-To-Text (ASR) Provider
-              </label>
-              <select
-                value={settings.asrProvider}
-                onChange={(e) => handleChange('asrProvider', e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
-              >
-                <option value="openai-whisper">Active API Integration (OpenAI / Groq Compatible)</option>
-              </select>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Connects directly to the endpoint configured below to transcribe your audio recording dynamically.
-              </p>
-            </div>
-
-            {/* ASR Model */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700 dark:text-slate-400 flex items-center gap-1.5">
-                <Radio className="h-4 w-4 text-emerald-500" /> ASR Model Name
-              </label>
-              <select
-                value={settings.asrModel || 'whisper-large-v3'}
-                onChange={(e) => {
-                  if (e.target.value !== 'whisper-1') handleChange('asrModel', e.target.value);
-                }}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
-              >
-                <option value="whisper-large-v3">✅ whisper-large-v3 — Groq (Free)</option>
-                <option value="whisper-1" disabled style={{color:'#9ca3af'}}>🔒 whisper-1 — OpenAI (Paid Only, not selectable)</option>
-              </select>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Only <code>whisper-large-v3</code> via Groq is available for free use. <span className="text-amber-500 font-semibold">whisper-1 requires a paid OpenAI account.</span>
-              </p>
-            </div>
-
-            {/* Quick Fill: Groq */}
-            <div className="rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 border border-emerald-200 dark:border-emerald-900/30 p-4">
-              <p className="text-xs font-bold text-emerald-800 dark:text-emerald-400 mb-1">🆓 Use Groq — 100% Free, No Credit Card</p>
-              <p className="text-xs text-emerald-700 dark:text-emerald-500 mb-3">
-                Get a free key at <a href="https://console.groq.com" target="_blank" rel="noreferrer" className="underline font-semibold">console.groq.com</a>, then click below to auto-fill the settings.
-              </p>
-              <button
-                type="button"
-                onClick={() => setSettings(prev => ({
-                  ...prev,
-                  openaiBaseUrl: 'https://api.groq.com/openai/v1',
-                  llmModel: 'openai/gpt-oss-20b',
-                  asrModel: 'whisper-large-v3',
-                  asrProvider: 'openai-whisper',
-                }))}
-                className="text-xs font-bold px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-colors"
-              >
-                ⚡ Auto-fill Groq Settings
-              </button>
-            </div>
+        {settings.summaryProvider === 'custom' && (
+          <>
             <div className="space-y-2">
               <label htmlFor="baseUrl" className="text-sm font-semibold text-slate-700 dark:text-slate-350 flex items-center gap-1.5">
                 <Cpu className="h-4 w-4 text-indigo-500" /> OpenAI-Compatible Base URL
@@ -299,29 +314,29 @@ export default function Settings() {
                 Free Groq models are verified working. <span className="text-amber-500 font-semibold">OpenAI models require a paid API subscription.</span>
               </p>
             </div>
+          </>
+        )}
 
-            {/* Submit Button */}
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-              <button 
-                type="submit"
-                disabled={saving}
-                className="flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 font-semibold text-white shadow-lg shadow-violet-500/20 hover:bg-violet-500 disabled:opacity-50 transition-all duration-200"
-              >
-                {saving ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" /> Saving...
-                  </>
-                ) : (
-                  <>
-                    <ShieldCheck className="h-4 w-4" /> Save Configuration
-                  </>
-                )}
-              </button>
-            </div>
-
-          </form>
+        {/* Submit Button */}
+        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+          <button 
+            type="submit"
+            disabled={saving}
+            className="flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 font-semibold text-white shadow-lg shadow-violet-500/20 hover:bg-violet-500 disabled:opacity-50 transition-all duration-200"
+          >
+            {saving ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Saving...
+              </>
+            ) : (
+              <>
+                <ShieldCheck className="h-4 w-4" /> Save Configuration
+              </>
+            )}
+          </button>
         </div>
-      </div>
+
+      </form>
     </div>
   );
 }

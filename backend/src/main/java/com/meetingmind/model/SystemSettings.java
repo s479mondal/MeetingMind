@@ -29,4 +29,7 @@ public class SystemSettings {
 
     @Builder.Default
     private String asrModel = "whisper-large-v3"; // whisper-1 (OpenAI) or whisper-large-v3 (Groq)
+
+    @Builder.Default
+    private String summaryProvider = "groq"; // groq or gemini or custom
 }

@@ -41,6 +41,7 @@ public class SystemSettingsController {
                     .llmModel(defaultLlmModel)
                     .asrProvider(defaultAsrProvider)
                     .asrModel(defaultAsrModel)
+                    .summaryProvider("groq")
                     .build();
             defaultSettings = settingsRepository.save(defaultSettings);
             return ResponseEntity.ok(defaultSettings);
@@ -67,6 +68,9 @@ public class SystemSettingsController {
         if (newSettings.getAsrModel() != null && !newSettings.getAsrModel().trim().isEmpty()) {
             existing.setAsrModel(newSettings.getAsrModel());
         }
+        if (newSettings.getSummaryProvider() != null && !newSettings.getSummaryProvider().trim().isEmpty()) {
+            existing.setSummaryProvider(newSettings.getSummaryProvider());
+        }
 
         // Update key only if it's not empty and not masked
         String newKey = newSettings.getOpenaiApiKey();
@@ -82,6 +86,8 @@ public class SystemSettingsController {
                 .openaiBaseUrl(existing.getOpenaiBaseUrl())
                 .llmModel(existing.getLlmModel())
                 .asrProvider(existing.getAsrProvider())
+                .asrModel(existing.getAsrModel())
+                .summaryProvider(existing.getSummaryProvider())
                 .openaiApiKey(existing.getOpenaiApiKey() != null && !existing.getOpenaiApiKey().isEmpty() ? "••••••••••••••••••••••••" : "")
                 .build();
 
