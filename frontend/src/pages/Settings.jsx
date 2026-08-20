@@ -172,16 +172,23 @@ export default function Settings() {
           </label>
           <select
             value={settings.asrModel || 'whisper-large-v3'}
-            onChange={(e) => {
-              if (e.target.value !== 'whisper-1') handleChange('asrModel', e.target.value);
-            }}
+            onChange={(e) => handleChange('asrModel', e.target.value)}
             className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
           >
-            <option value="whisper-large-v3">✅ whisper-large-v3 — Groq (Free)</option>
-            <option value="whisper-1" disabled style={{color:'#9ca3af'}}>🔒 whisper-1 — OpenAI (Paid Only, not selectable)</option>
+            <optgroup label="✅ Free &amp; Active (Groq)">
+              <option value="whisper-large-v3">✅ whisper-large-v3 — Groq (Free Tier)</option>
+              <option value="whisper-large-v3-turbo">⚡ whisper-large-v3-turbo — Groq (Free &amp; Fast)</option>
+            </optgroup>
+            <optgroup label="🔒 External / Paid Providers (Read Only)">
+              <option value="google-speech-v1" disabled style={{color:'#9ca3af'}}>🔒 Google Cloud Speech-to-Text V1 (60 min/month free)</option>
+              <option value="azure-speech-v1" disabled style={{color:'#9ca3af'}}>🔒 Azure Speech-to-Text (Limited Free Tier)</option>
+              <option value="assemblyai-v1" disabled style={{color:'#9ca3af'}}>🔒 AssemblyAI Speech-to-Text (Free Trial / Key Required)</option>
+              <option value="whisper-1" disabled style={{color:'#9ca3af'}}>🔒 whisper-1 — OpenAI (Paid API Key Required)</option>
+              <option value="whisper-local" disabled style={{color:'#9ca3af'}}>💻 Self-hosted Whisper (Requires GPU/CPU Server)</option>
+            </optgroup>
           </select>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Only <code>whisper-large-v3</code> via Groq is available for free use. <span className="text-amber-500 font-semibold">whisper-1 requires a paid OpenAI account.</span>
+            Groq models are free &amp; verified working. <span className="text-amber-500 font-semibold">External/Paid providers are read-only restrictions.</span>
           </p>
         </div>
 
