@@ -175,8 +175,8 @@ export default function MeetingHistory() {
               className="group relative flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:border-violet-300 dark:border-slate-800 dark:bg-darkbg-900 dark:hover:border-violet-900/50 transition-all duration-200"
             >
               {/* Header Info */}
-              <div className="space-y-2">
-                <div className="flex items-start justify-between gap-4">
+              <div className="space-y-2 flex flex-col items-start w-full">
+                <div className="flex items-start justify-between gap-4 w-full">
                   <h3 className="font-bold text-slate-900 dark:text-white line-clamp-2 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
                     {meeting.title || 'Untitled Meeting'}
                   </h3>
@@ -187,6 +187,22 @@ export default function MeetingHistory() {
                     </span>
                   )}
                 </div>
+
+                {meeting.summarizerProvider && (
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
+                    meeting.summarizerProvider === 'groq' 
+                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400' 
+                      : meeting.summarizerProvider === 'gemini'
+                        ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400'
+                        : 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400'
+                  }`}>
+                    {meeting.summarizerProvider === 'groq' 
+                      ? 'Llama 3.3 70B (Groq)' 
+                      : meeting.summarizerProvider === 'gemini'
+                        ? 'Gemini 3.6 Flash'
+                        : `Custom: ${meeting.summarizerModel || 'LLM'}`}
+                  </span>
+                )}
 
                 <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
                   {meeting.summary || 'No summary generated yet.'}

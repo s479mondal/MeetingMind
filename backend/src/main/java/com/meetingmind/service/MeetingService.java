@@ -2,6 +2,7 @@ package com.meetingmind.service;
 
 import com.meetingmind.model.ActionItem;
 import com.meetingmind.model.Meeting;
+import com.meetingmind.model.SystemSettings;
 import com.meetingmind.repository.MeetingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,9 @@ public class MeetingService {
 
     @Autowired
     private SummarizationService summarizationService;
+
+    @Autowired
+    private SettingsService settingsService;
 
     public Meeting initiateMeetingUpload(MultipartFile file, String customTitle) throws IOException {
         String originalFilename = file.getOriginalFilename();
@@ -82,6 +86,23 @@ public class MeetingService {
             
             // 3. Summarize Transcript (Status: ANALYZING)
             meeting.setStatus(Meeting.Status.ANALYZING);
+            
+            try {
+                SystemSettings settings = settingsService.getActiveSettings();
+                String provider = settings.getSummaryProvider();
+                if (provider == null) provider = "groq";
+                meeting.setSummarizerProvider(provider);
+                if ("groq".equalsIgnoreCase(provider)) {
+                    meeting.setSummarizerModel("openai/gpt-oss-20b");
+                } else if ("gemini".equalsIgnoreCase(provider)) {
+                    meeting.setSummarizerModel("gemini-3.6-flash");
+                } else {
+                    meeting.setSummarizerModel(settings.getLlmModel());
+                }
+            } catch (Exception e) {
+                log.warn("Failed to capture summarizer model configurations: {}", e.getMessage());
+            }
+
             meetingRepository.save(meeting);
             
             Map<String, Object> analysis = summarizationService.analyzeTranscript(transcript, title);

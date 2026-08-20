@@ -252,7 +252,7 @@ export default function Settings() {
                   className="text-violet-600 focus:ring-violet-500 h-4 w-4"
                 />
               </div>
-              <span className="text-xs text-slate-500 dark:text-slate-400">Gemini 2.5 Flash</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400">Gemini 3.6 Flash</span>
               <span className="text-xs font-semibold text-emerald-600 mt-2">FREE Tier</span>
             </label>
 

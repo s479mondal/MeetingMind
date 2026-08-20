@@ -178,7 +178,24 @@ export default function MeetingDetail() {
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{meeting.title || 'Untitled Meeting'}</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{meeting.title || 'Untitled Meeting'}</h1>
+              {meeting.summarizerProvider && (
+                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
+                  meeting.summarizerProvider === 'groq' 
+                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400' 
+                    : meeting.summarizerProvider === 'gemini'
+                      ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400'
+                      : 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400'
+                }`}>
+                  {meeting.summarizerProvider === 'groq' 
+                    ? 'Llama 3.3 70B (Groq)' 
+                    : meeting.summarizerProvider === 'gemini'
+                      ? 'Gemini 3.6 Flash'
+                      : `Custom: ${meeting.summarizerModel || 'LLM'}`}
+                </span>
+              )}
+            </div>
             <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400 mt-1">
               <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />{new Date(meeting.createdAt).toLocaleDateString()}</span>
               <span>•</span>

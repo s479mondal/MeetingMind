@@ -54,8 +54,8 @@ public class SummarizationService {
             modelName = "openai/gpt-oss-20b";
         } else if ("gemini".equals(provider)) {
             apiKey = (geminiApiKey != null && !geminiApiKey.trim().isEmpty()) ? geminiApiKey : settings.getOpenaiApiKey();
-            baseUrl = "https://generativelanguage.googleapis.com/v1beta/openai";
-            modelName = "gemini-2.5-flash";
+            baseUrl = "https://generativelanguage.googleapis.com/v1beta/openai/v1";
+            modelName = "gemini-3.6-flash";
         } else {
             // custom / default
             apiKey = settings.getOpenaiApiKey();
@@ -146,6 +146,13 @@ public class SummarizationService {
             // Clean markdown block wrappers if LLM still returned them
             if (aiResponseText.startsWith("```")) {
                 aiResponseText = aiResponseText.replaceAll("^```json\\s*", "").replaceAll("```$", "").trim();
+            }
+
+            // Extract the first JSON object block to handle conversational wraps
+            int startIdx = aiResponseText.indexOf('{');
+            int endIdx = aiResponseText.lastIndexOf('}');
+            if (startIdx != -1 && endIdx != -1 && endIdx > startIdx) {
+                aiResponseText = aiResponseText.substring(startIdx, endIdx + 1);
             }
 
             JsonNode parsedAnalysis = objectMapper.readTree(aiResponseText);

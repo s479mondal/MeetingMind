@@ -44,6 +44,9 @@ public class Meeting {
     
     @Builder.Default
     private Map<String, Object> aiInsights = new HashMap<>();
+
+    private String summarizerModel;
+    private String summarizerProvider;
     
     @CreatedDate
     private Instant createdAt;
