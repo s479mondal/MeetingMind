@@ -22,6 +22,7 @@ export default function Settings() {
     asrProvider: 'openai-whisper',
     asrModel: 'whisper-large-v3',
     summaryProvider: 'groq',
+    evaluationFocus: 'Summary Quality',
   });
 
   const [loading, setLoading] = useState(true);
@@ -181,6 +182,28 @@ export default function Settings() {
           </select>
           <p className="text-xs text-slate-500 dark:text-slate-400">
             Only <code>whisper-large-v3</code> via Groq is available for free use. <span className="text-amber-500 font-semibold">whisper-1 requires a paid OpenAI account.</span>
+          </p>
+        </div>
+
+        {/* Evaluation Focus */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-slate-700 dark:text-slate-400 flex items-center gap-1.5">
+            <Radio className="h-4 w-4 text-indigo-500" /> Evaluation Focus
+          </label>
+          <select
+            value={settings.evaluationFocus || 'Summary Quality'}
+            onChange={(e) => handleChange('evaluationFocus', e.target.value)}
+            className="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white text-slate-900 dark:border-slate-800 dark:bg-darkbg-850 dark:text-white"
+          >
+            <option value="Summary Quality">Summary Quality</option>
+            <option value="Transcription Accuracy">Transcription Accuracy</option>
+            <option value="Action Item Accuracy">Action Item Accuracy</option>
+            <option value="Decision Accuracy">Decision Accuracy</option>
+            <option value="Factuality">Factuality</option>
+            <option value="Overall Quality">Overall Quality</option>
+          </select>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Select the primary focus area for evaluating the meeting intelligence output.
           </p>
         </div>
 

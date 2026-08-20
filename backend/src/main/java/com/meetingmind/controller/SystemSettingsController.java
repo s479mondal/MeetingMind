@@ -42,6 +42,7 @@ public class SystemSettingsController {
                     .asrProvider(defaultAsrProvider)
                     .asrModel(defaultAsrModel)
                     .summaryProvider("groq")
+                    .evaluationFocus("Summary Quality")
                     .build();
             defaultSettings = settingsRepository.save(defaultSettings);
             return ResponseEntity.ok(defaultSettings);
@@ -71,6 +72,9 @@ public class SystemSettingsController {
         if (newSettings.getSummaryProvider() != null && !newSettings.getSummaryProvider().trim().isEmpty()) {
             existing.setSummaryProvider(newSettings.getSummaryProvider());
         }
+        if (newSettings.getEvaluationFocus() != null && !newSettings.getEvaluationFocus().trim().isEmpty()) {
+            existing.setEvaluationFocus(newSettings.getEvaluationFocus());
+        }
 
         // Update key only if it's not empty and not masked
         String newKey = newSettings.getOpenaiApiKey();
@@ -88,6 +92,7 @@ public class SystemSettingsController {
                 .asrProvider(existing.getAsrProvider())
                 .asrModel(existing.getAsrModel())
                 .summaryProvider(existing.getSummaryProvider())
+                .evaluationFocus(existing.getEvaluationFocus())
                 .openaiApiKey(existing.getOpenaiApiKey() != null && !existing.getOpenaiApiKey().isEmpty() ? "••••••••••••••••••••••••" : "")
                 .build();
 

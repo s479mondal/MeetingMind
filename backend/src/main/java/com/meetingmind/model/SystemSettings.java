@@ -32,4 +32,7 @@ public class SystemSettings {
 
     @Builder.Default
     private String summaryProvider = "groq"; // groq or gemini or custom
+
+    @Builder.Default
+    private String evaluationFocus = "Summary Quality"; // Transcription accuracy, Summary Quality, LLM prompt effectiveness, Code structure
 }

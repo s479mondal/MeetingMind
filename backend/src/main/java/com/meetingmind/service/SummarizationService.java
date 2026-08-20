@@ -51,7 +51,7 @@ public class SummarizationService {
         if ("groq".equals(provider)) {
             apiKey = (groqApiKey != null && !groqApiKey.trim().isEmpty()) ? groqApiKey : settings.getOpenaiApiKey();
             baseUrl = "https://api.groq.com/openai/v1";
-            modelName = "llama-3.3-70b-versatile";
+            modelName = "openai/gpt-oss-20b";
         } else if ("gemini".equals(provider)) {
             apiKey = (geminiApiKey != null && !geminiApiKey.trim().isEmpty()) ? geminiApiKey : settings.getOpenaiApiKey();
             baseUrl = "https://generativelanguage.googleapis.com/v1beta/openai";
