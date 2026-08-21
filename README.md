@@ -1,291 +1,325 @@
 # 🧠 MeetingMind — AI Meeting Intelligence Platform
 
-> **Assignment:** Meeting Summarizer | AI-powered transcription, summarization, and action-item extraction from meeting audio recordings.
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![React](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![MongoDB Atlas](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/cloud/atlas)
+[![OpenAI](https://img.shields.io/badge/OpenAI-Whisper%20%26%20GPT--4o--mini-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com/)
+[![Java](https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
 
-MeetingMind is a full-stack, production-quality AI meeting summarizer. Users upload meeting audio recordings, and the system automatically:
-- **Transcribes** the audio using OpenAI Whisper (ASR)
-- **Summarizes** the discussion using GPT-4o-mini (LLM)
-- **Extracts** key decisions, action items (with assignees & deadlines), and AI insights
+> **Meeting Summarizer & Intelligence Platform** | Transform raw meeting audio recordings into automated ASR transcriptions, concise executive summaries, actionable key decisions, and structured task assignments.
 
-It includes a polished React frontend, a Spring Boot REST backend, and MongoDB Atlas for persistence — with a built-in **demo/mock mode** that works without any API key.
+MeetingMind is a full-stack AI platform designed to automate meeting documentation. Users upload meeting audio files (MP3, WAV, M4A, WEBM, FLAC), and the system automatically transcribes, analyzes, and extracts key insights. It supports both **live AI mode** (via OpenAI API) and a **zero-dependency Demo/Mock mode** for offline testing.
 
 ---
 
 ## 📺 Demo Video
 
-> 🎬 **[Watch the Demo Video](#)** ← *(link to be added)*
+> 🎬 **[Watch the MeetingMind Walkthrough Video](#)** *(Video link available in project documentation)*
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
 | Feature | Description |
 |---|---|
-| 🎙️ **ASR Transcription** | Uploads audio to OpenAI Whisper (`whisper-1`) → returns full text transcript |
-| 📝 **Executive Summary** | LLM-generated paragraph summarizing the discussion |
-| ✅ **Action Items** | Structured tasks with assignee, deadline, priority (HIGH/MEDIUM/LOW), and completion status |
-| 🎯 **Key Decisions** | Bullet list of decisions made during the meeting |
-| 🤖 **AI Insights** | Topics covered, risks identified, follow-up suggestions, overall tone/sentiment |
-| 📊 **Dashboard** | Real-time metrics: meetings processed, action item stats, total audio minutes analyzed |
-| 🔍 **Meeting History** | Searchable, sortable list of all past meetings |
-| 📋 **Action Item Board** | Cross-meeting task aggregation (like a project board) |
-| ⚙️ **Settings UI** | Configure API key, LLM model, and ASR mode from the browser — no code changes needed |
-| 🌗 **Dark Mode** | Full dark/light theme support with `localStorage` persistence |
-| 🧪 **Mock/Demo Mode** | Fully functional demo with preset realistic transcripts and analysis — no API key needed |
+| 🎙️ **ASR Speech-to-Text** | Automatic audio transcription via **OpenAI Whisper (`whisper-1`)** with background async execution |
+| 📝 **Executive Summary** | AI-generated executive summaries capturing meeting context and key discussion points |
+| ✅ **Action Items Board** | Structured task extraction featuring assignees, deadlines, priorities (`HIGH`, `MEDIUM`, `LOW`), and status tracking |
+| 🎯 **Key Decisions** | Highlighted bullet points of binding decisions made during the discussion |
+| 🤖 **AI Deep Insights** | Automated extraction of key topics covered, identified project risks, follow-up suggestions, and overall sentiment analysis |
+| 📊 **Analytics Dashboard** | Live real-time statistics covering total audio hours processed, active action items, and meeting counts |
+| 🔍 **Search & Filters** | Instant full-text search across meeting titles, summaries, and transcripts with multi-field sorting |
+| ⚙️ **System Settings UI** | Dynamic browser-based AI provider configuration (switch between Live API & Demo/Mock mode without restarting) |
+| 🌗 **Dark / Light Theme** | Premium glassmorphism design with seamless theme toggling and persistent browser preference |
+| 🧪 **Offline Demo Mode** | Built-in realistic mock engine with sample audio scenarios — no OpenAI API key required |
 
 ---
 
-## 🏗️ Tech Stack
+## 🏗️ Technical Architecture & Tech Stack
 
-| Layer | Technology |
+### Technology Matrix
+
+| Layer | Technology & Framework |
 |---|---|
-| **Frontend** | React 19, Vite 8, Tailwind CSS 4, React Router v7, Axios, Lucide React |
-| **Backend** | Java 17, Spring Boot 3.3, Spring Data MongoDB, OkHttp 4 |
-| **Database** | MongoDB Atlas (cloud) |
-| **ASR (Speech-to-Text)** | OpenAI Whisper API (`whisper-1`) |
-| **LLM (Summarization)** | OpenAI Chat Completions API (`gpt-4o-mini`) |
-| **Build Tools** | Maven (backend), npm (frontend) |
+| **Frontend UI** | React 19, Vite 8, Tailwind CSS v4, React Router v7, Axios, Lucide Icons |
+| **Backend API** | Java 17, Spring Boot 3.3, Spring Data MongoDB, OkHttp 3/4, Jackson |
+| **Database** | MongoDB Atlas (Cloud Cluster) / Local MongoDB instance |
+| **Speech Recognition** | OpenAI Whisper API (`whisper-1`) / Built-in Mock Transcriber |
+| **Intelligence Engine** | OpenAI Chat Completions API (`gpt-4o-mini`) / Mock Analyzer |
+| **Build & Tooling** | Maven 3.8+ (Backend), Node.js 18+ & npm (Frontend) |
+
+### System Workflow Pipeline
+
+```
+                     ┌───────────────────────────┐
+                     │   User Uploads Audio      │
+                     └─────────────┬─────────────┘
+                                   │ (Multipart HTTP POST)
+                                   ▼
+                     ┌───────────────────────────┐
+                     │   Spring Boot Controller  │
+                     │  Creates record: UPLOADING│
+                     └─────────────┬─────────────┘
+                                   │ Returns HTTP 202 Accepted
+                                   ▼
+ ┌───────────────────────────────────────────────────────────────────────┐
+ │               ASYNCHRONOUS PIPELINE (Background Thread)              │
+ │                                                                       │
+ │  [Step 1: Speech-to-Text (ASR)]                                       │
+ │   • Status -> TRANSCRIBING                                            │
+ │   • Audio file sent to OpenAI Whisper API (or Mock Engine)            │
+ │   • Output: Full text transcript string                               │
+ │                                                                       │
+ │  [Step 2: AI Summarization & Analytics (LLM)]                         │
+ │   • Status -> ANALYZING                                               │
+ │   • Transcript sent to GPT-4o-mini with structured JSON system prompt │
+ │   • Output: Summary, Key Decisions, Action Items, AI Insights          │
+ │                                                                       │
+ │  [Step 3: Persistence]                                                │
+ │   • Status -> COMPLETED                                               │
+ │   • Document updated in MongoDB Atlas                                 │
+ └───────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+                     ┌───────────────────────────┐
+                     │   React Frontend Displays │
+                     │   Full Results & Dashboard│
+                     └───────────────────────────┘
+```
 
 ---
 
-## 🔄 How It Works
-
-```
-User uploads audio file
-        ↓
-Backend validates & saves initial record → status: UPLOADING
-        ↓
-Returns HTTP 202 immediately (non-blocking async processing)
-        ↓  (background thread)
-┌──────────────────────────────────────┐
-│  STEP 1 — TRANSCRIBING               │
-│  → OpenAI Whisper API                │
-│  → Audio file → plain text transcript│
-└──────────────────────────────────────┘
-        ↓
-┌──────────────────────────────────────┐
-│  STEP 2 — ANALYZING                  │
-│  → GPT-4o-mini with structured prompt│
-│  → Returns JSON: summary,            │
-│    keyDecisions, actionItems,        │
-│    aiInsights (topics/risks/followUps│
-│    /sentiment)                       │
-└──────────────────────────────────────┘
-        ↓
-Saved to MongoDB → status: COMPLETED
-User views full results in the UI
-```
-
-### LLM Prompt Strategy
-
-The summarization prompt is carefully engineered to return a **strict JSON schema** (no markdown wrappers). Example:
-
-```
-You are a professional meeting intelligence AI. Analyze the following meeting transcript.
-Extract:
-1. A concise executive summary (1-2 paragraphs)
-2. A list of key decisions made
-3. Action items with: task, assignee, deadline, priority (HIGH/MEDIUM/LOW)
-4. AI insights: topics (with duration), risks, follow-ups, sentiment
-
-IMPORTANT: Return ONLY valid JSON. Do NOT wrap in markdown code blocks.
-```
-
-This ensures reliable, structured extraction that maps directly to the data model — no post-processing ambiguity.
-
----
-
-## 📁 Project Structure
+## 📁 Repository Structure
 
 ```
 MeetingMind/
-├── .env                          ← Environment variables (copy from .env.example)
-├── .env.example                  ← Template with all required variables
-├── backend/                      ← Spring Boot REST API
+├── .env                              ← Global environment configuration
+├── .env.example                      ← Configuration template
+├── backend/                          ← Spring Boot Server Application
 │   ├── src/main/java/com/meetingmind/
-│   │   ├── MeetingMindApplication.java   ← Entry point (@EnableAsync, @EnableMongoAuditing)
-│   │   ├── config/
-│   │   │   ├── CorsConfig.java           ← CORS (allows :5173)
-│   │   │   └── MongoConfig.java          ← Auto-creates collections + indexes
-│   │   ├── controller/
-│   │   │   ├── MeetingController.java    ← Upload, list, get, delete endpoints
-│   │   │   ├── ActionItemController.java ← PATCH / DELETE action items
-│   │   │   └── SystemSettingsController.java ← API key & model config
-│   │   ├── model/
-│   │   │   ├── Meeting.java              ← MongoDB document (with embedded ActionItems)
-│   │   │   ├── ActionItem.java           ← Embedded task model
-│   │   │   └── SystemSettings.java       ← Singleton config document
-│   │   ├── repository/
-│   │   │   ├── MeetingRepository.java    ← Full-text search query
-│   │   │   └── SystemSettingsRepository.java
-│   │   └── service/
-│   │       ├── MeetingService.java       ← Orchestrates async pipeline
-│   │       ├── TranscriptionService.java ← Whisper API / mock transcript
-│   │       ├── SummarizationService.java ← GPT API / mock analysis
-│   │       └── SettingsService.java      ← Shared settings accessor
-│   └── pom.xml
-└── frontend/                     ← React + Vite SPA
-    └── src/
-        ├── App.jsx                       ← Router + dark mode init
-        ├── components/Sidebar.jsx        ← Navigation
-        ├── pages/
-        │   ├── LandingPage.jsx
-        │   ├── Dashboard.jsx
-        │   ├── UploadMeeting.jsx
-        │   ├── MeetingHistory.jsx
-        │   ├── MeetingDetail.jsx
-        │   ├── ActionItemsPage.jsx
-        │   └── Settings.jsx
-        └── services/api.js               ← Axios service layer
+│   │   ├── MeetingMindApplication.java   ← App Entrypoint (@EnableAsync, @EnableMongoAuditing)
+│   │   ├── config/                   ← CORS configuration & Mongo index builders
+│   │   ├── controller/               ← REST API controllers (Meetings, ActionItems, Settings)
+│   │   ├── model/                    ← Data entities (Meeting, ActionItem, SystemSettings)
+│   │   ├── repository/               ← Spring Data Mongo Repositories
+│   │   └── service/                  ← Business logic & Async processing engine
+│   ├── start.bat                     ← One-click Windows starter script
+│   └── pom.xml                       ← Maven project declaration & dependencies
+├── frontend/                         ← React + Vite Web Application
+│   ├── src/
+│   │   ├── components/               ← Reusable components (Sidebar, Modals, Badges)
+│   │   ├── pages/                    ← Views (Dashboard, Upload, History, Detail, Settings)
+│   │   ├── services/                 ← Axios HTTP API service wrapper
+│   │   ├── App.jsx                   ← App Router & Layout setup
+│   │   └── index.css                 ← Tailwind CSS rules & Custom Design Tokens
+│   ├── package.json                  ← Frontend dependencies & build scripts
+│   └── vite.config.js                ← Vite build & proxy settings
+└── maven/                            ← Bundled Maven wrapper binaries
 ```
 
 ---
 
-## 🚀 Setup & Running
+## 🚀 Quick Start Guide
 
 ### Prerequisites
 
-| Requirement | Version |
-|---|---|
-| Java JDK | 17 or higher |
-| Node.js | 18 or higher |
-| MongoDB | Atlas URI (or local `mongodb://localhost:27017`) |
-| OpenAI API Key | Optional — app works in Mock Mode without it |
+Ensure you have the following installed on your local development machine:
+
+- **Java Development Kit (JDK)**: Version 17 or higher (`java -version`)
+- **Node.js**: Version 18.0.0 or higher (`node -v`)
+- **npm**: Version 9.0.0 or higher (`npm -v`)
+- **MongoDB**: Access to a MongoDB Atlas cluster URL or local MongoDB instance
 
 ---
 
-### Step 1 — Configure Environment
+### Step 1: Environment Setup
 
-Copy the example file and fill in your values:
+Clone the repository and copy the environment variables template:
 
 ```bash
+# Clone repository
+git clone https://github.com/your-username/MeetingMind.git
+cd MeetingMind
+
+# Create your .env file
 cp .env.example .env
 ```
 
-Edit `.env`:
+Edit `.env` with your preferred credentials:
 
-```bash
-# ── MongoDB ──────────────────────────────────────
-MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.xxx.mongodb.net/meetingmind
+```ini
+# MongoDB Connection
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.xxx.mongodb.net/meetingmind?retryWrites=true&w=majority
 
-# ── OpenAI (optional — leave as-is for Demo Mode) ─
-OPENAI_API_KEY=sk-...          # Your key from platform.openai.com/api-keys
+# OpenAI Integration (Optional - set provider to 'mock' if no API key)
+OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx
 OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_LLM_MODEL=gpt-4o-mini
-ASR_PROVIDER=openai-whisper    # Change to 'mock' for Demo Mode
+ASR_PROVIDER=openai-whisper
 
-# ── Frontend ──────────────────────────────────────
+# Application Ports & URLs
+SERVER_PORT=8080
 VITE_API_URL=http://localhost:8080/api
 ```
 
-> 💡 **No OpenAI key?** Set `ASR_PROVIDER=mock` — the app will run fully in Demo Mode with realistic preset data.
-
 ---
 
-### Step 2 — Start the Backend
+### Step 2: Launch the Backend (Spring Boot)
 
+Navigate to the `backend` directory and start the Spring Boot server:
+
+#### On Windows:
+```cmd
+cd backend
+..\maven\bin\mvn.cmd spring-boot:run
+```
+*Or simply double-click `backend/start.bat`.*
+
+#### On Linux / macOS:
 ```bash
 cd backend
-
-# Option A: Using the bundled Maven wrapper
-..\maven\bin\mvn.cmd spring-boot:run
-
-# Option B: Using system Maven
 mvn spring-boot:run
-
-# Option C: Using the included batch file (Windows)
-start.bat
 ```
 
-Backend starts at **http://localhost:8080**
+The REST API server will start on **`http://localhost:8080`**.
 
 ---
 
-### Step 3 — Start the Frontend
+### Step 3: Launch the Frontend (React + Vite)
+
+In a separate terminal window, start the React application:
 
 ```bash
 cd frontend
-npm install      # First time only
+
+# Install dependencies (first-time setup)
+npm install
+
+# Run Vite dev server
 npm run dev
 ```
 
-Frontend starts at **http://localhost:5173**
+The frontend application will open at **`http://localhost:5173`**.
 
 ---
 
-### Step 4 — Open the App
+## 🧪 Demo / Mock Mode (Zero-API Key Required)
 
-Navigate to **http://localhost:5173** in your browser.
+If you do not have an active OpenAI API key, MeetingMind comes with a built-in **Mock Processing Engine**.
 
----
+### How to Enable Mock Mode:
+1. **Option A (via `.env`)**: Set `ASR_PROVIDER=mock` in your `.env` file before launching the backend.
+2. **Option B (via Web UI)**: Go to **Settings** in the web app UI → select **Demo Mode (Mock Engine)** under ASR Provider → Click **Save Settings**.
 
-## 🧪 Demo Mode (No API Key Required)
+### Preset Mock Scenarios:
+When uploading audio in Mock Mode, the engine intelligently evaluates the meeting title to provide realistic context:
 
-The app has a built-in **Mock/Demo Mode** — no OpenAI account needed.
-
-The mock engine keyword-matches the meeting title and returns realistic, pre-written transcripts and analysis:
-
-| Meeting title contains | Preset scenario |
+| Meeting Title Keyword | Generated Mock Scenario |
 |---|---|
-| `sprint`, `planning`, `project` | Release timeline, QA testing, deployment decisions |
-| `client`, `sync`, `design` | Figma review, dark mode feedback, payment gateway risk |
-| *(any other title)* | Feature sync, backend/frontend coordination |
-
-To enable: set `ASR_PROVIDER=mock` in `.env` **or** go to **Settings → ASR Provider → Demo Mode → Save**.
+| `sprint`, `planning`, `agile` | Software Development Sprint Planning, QA milestones, & Release timelines |
+| `client`, `design`, `sync` | Product UX review, payment gateway integration, & Dark Mode feedback |
+| *(Any other title)* | General Engineering Sync, cross-team collaboration, & task handoffs |
 
 ---
 
 ## 📡 REST API Reference
 
-### Meetings
+### Meeting Endpoints
 
-| Method | Endpoint | Description |
+| Method | Path | Description |
 |---|---|---|
-| `POST` | `/api/meetings/upload` | Upload audio file (multipart: `file`, optional `title`) |
-| `GET` | `/api/meetings` | List all meetings (`?search=`, `?sortBy=`, `?sortDir=`) |
-| `GET` | `/api/meetings/{id}` | Get full meeting details |
-| `DELETE` | `/api/meetings/{id}` | Delete meeting and all its data |
-| `GET` | `/api/meetings/{id}/transcript` | Get raw transcript text |
-| `GET` | `/api/meetings/{id}/summary` | Get summary only |
-| `GET` | `/api/meetings/{id}/action-items` | Get action items list |
+| `POST` | `/api/meetings/upload` | Upload audio file (`multipart/form-data`) with optional title |
+| `GET` | `/api/meetings` | List meetings with filtering (`search`, `sortBy`, `sortDir`) |
+| `GET` | `/api/meetings/{id}` | Retrieve complete details of a specific meeting |
+| `DELETE` | `/api/meetings/{id}` | Permanently delete a meeting and its analytics |
+| `GET` | `/api/meetings/{id}/transcript` | Get plain-text transcript |
+| `GET` | `/api/meetings/{id}/summary` | Get executive summary |
+| `GET` | `/api/meetings/{id}/action-items` | Get action items array for specific meeting |
 
-### Action Items
+### Action Item Endpoints
 
-| Method | Endpoint | Description |
+| Method | Path | Description |
 |---|---|---|
-| `PATCH` | `/api/action-items/{meetingId}/{itemId}` | Update status / assignee / task / priority / deadline |
+| `PATCH` | `/api/action-items/{meetingId}/{itemId}` | Update task status, assignee, priority, or deadline |
 | `DELETE` | `/api/action-items/{meetingId}/{itemId}` | Delete a single action item |
 
-### System Settings
+### System & Settings Endpoints
 
-| Method | Endpoint | Description |
+| Method | Path | Description |
 |---|---|---|
-| `GET` | `/api/system/settings` | Get current AI configuration |
-| `POST` | `/api/system/settings` | Save API key + model + ASR provider |
+| `GET` | `/api/system/settings` | Get current AI engine settings & provider mode |
+| `POST` | `/api/system/settings` | Save updated OpenAI key, model selection, or provider |
 
 ---
 
-## 📊 Data Model
+## 📊 Data Model Overview
 
-```
-Meeting {
-  id, title, fileName, duration (min), status,
-  transcript, summary,
-  keyDecisions: [string],
-  actionItems: [{ id, task, assignee, deadline, priority, status }],
-  aiInsights: { topics, risks, followUps, sentiment },
-  createdAt, updatedAt
+The core `Meeting` MongoDB Document schema:
+
+```json
+{
+  "_id": "66c5a1f2e4b0123456789abc",
+  "title": "Q3 Product Architecture Review",
+  "fileName": "audio_recording_q3.mp3",
+  "fileSizeBytes": 4512000,
+  "durationSeconds": 1420,
+  "status": "COMPLETED",
+  "transcript": "Hello everyone, welcome to the architecture sync...",
+  "summary": "The team discussed transitioning to microservices...",
+  "keyDecisions": [
+    "Approved migration of user service to Spring Boot 3",
+    "Selected MongoDB Atlas for cloud document storage"
+  ],
+  "actionItems": [
+    {
+      "id": "act_01",
+      "task": "Set up MongoDB Atlas indexes",
+      "assignee": "Alex",
+      "priority": "HIGH",
+      "deadline": "2026-08-30",
+      "status": "PENDING"
+    }
+  ],
+  "aiInsights": {
+    "topics": ["Architecture", "Database Migration", "API Specs"],
+    "risks": ["Potential downtime during schema update"],
+    "followUps": ["Schedule load testing session"],
+    "sentiment": "POSITIVE"
+  },
+  "createdAt": "2026-08-21T18:30:00Z",
+  "updatedAt": "2026-08-21T18:35:00Z"
 }
 ```
 
-Meeting status lifecycle: `UPLOADING → TRANSCRIBING → ANALYZING → COMPLETED / FAILED`
+---
+
+## 🛠️ Troubleshooting & FAQ
+
+<details>
+<summary><b>Q: The frontend displays CORS error when calling backend API</b></summary>
+
+> Ensure `CorsConfig.java` in backend permits `http://localhost:5173`. Also verify that `VITE_API_URL` in `.env` is set to `http://localhost:8080/api`.
+</details>
+
+<details>
+<summary><b>Q: Spring Boot fails to connect to MongoDB</b></summary>
+
+> Check that your IP address is whitelisted in MongoDB Atlas Network Access rules (`0.0.0.0/0` for dev mode) and that `MONGODB_URI` has special characters in password URL-encoded properly.
+</details>
+
+<details>
+<summary><b>Q: Audio upload returns error "File size exceeds maximum permitted"</b></summary>
+
+> The Spring Boot configuration supports multipart uploads up to 50MB by default. For larger audio files, compress to MP3/M4A format or increase limit in `application.properties`.
+</details>
 
 ---
 
-## 🔮 Future Improvements
+## 📜 License
 
-1. **Audio Player Sync** — Highlight transcript in real time as audio plays
-2. **Speaker Diarization** — Auto-detect and label different speakers
-3. **Export to Jira / Trello / Slack** — Push action items directly to project tools
-4. **Google Drive Import** — Import recordings directly from cloud storage
-5. **Email Digest** — Auto-send meeting summaries to participants
+This project is open-source and available under the [MIT License](LICENSE).
+
+---
+
+<p center>Crafted with ❤️ for seamless meeting productivity and AI intelligence.</p>
